@@ -1,4 +1,6 @@
-﻿#if UNITY_STANDALONE
+﻿// http://www.kamend.com/2014/05/rendering-a-point-cloud-inside-unity/
+
+#if UNITY_STANDALONE
 #define IMPORT_GLENABLE
 #endif
 

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿// http://www.kamend.com/2014/05/rendering-a-point-cloud-inside-unity/
+
+using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
