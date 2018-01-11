@@ -10,11 +10,10 @@ public class PointCloud : MonoBehaviour {
     public int numPoints = 60000;
     public float size = 5f;
     public Color color;
-
-    private Mesh mesh;
+    public Mesh mesh;
 
     private void Start() {
-        mesh = new Mesh();
+        if (mesh==null)mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
         CreateMesh();
     }

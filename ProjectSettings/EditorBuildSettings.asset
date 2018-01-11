@@ -6,5 +6,5 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/PointCloud/Examples/Scenes/Main.unity
-    guid: 955245a49ae79d04c84c3370186d955f
+    path: Assets/Scenes/Main.unity
+    guid: 99e0719251e0c43d9880d0a172064e20

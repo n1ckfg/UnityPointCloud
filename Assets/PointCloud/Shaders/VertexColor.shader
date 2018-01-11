@@ -3,6 +3,10 @@
 
 Shader "Custom/VertexColor" {
 
+    Properties {
+        _Color("Color", Color) = (1.0, 1.0, 1.0, 1.0)
+    }
+
 	SubShader {
 		Pass {
 			LOD 200
@@ -28,8 +32,10 @@ Shader "Custom/VertexColor" {
 				return o;
 			}
 
+            float4 _Color;
+
 			float4 frag(VertexOutput o) : COLOR{
-				return o.col;
+				return o.col * _Color;
 			}
 			ENDCG
 		}
