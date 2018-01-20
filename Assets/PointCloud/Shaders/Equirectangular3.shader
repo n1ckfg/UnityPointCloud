@@ -4,9 +4,11 @@
 Shader "Custom/Equirectangular3" {
 
     Properties {
-		_MainTex("Diffuse (RGB) Alpha (A)", 2D) = "gray" {}
+		_MainTex("Diffuse RGBA", 2D) = "gray" {}
+		_DepthTex("Depth", 2D) = "gray" {}
 		_Color("Color", Color) = (1.0, 1.0, 1.0, 1.0)
-    }
+		_Displacement("Displacement", float) = 1.0
+	}
 
 	SubShader {
 		Pass {
@@ -18,18 +20,20 @@ Shader "Custom/Equirectangular3" {
 
 			struct VertexInput {
 				float4 v : POSITION;
-				//float4 color: COLOR;
+				float4 color: COLOR;
 				float3 normal: NORMAL;
 			};
 
 			struct VertexOutput {
 				float4 pos : SV_POSITION;
-				//float4 col : COLOR;
+				float4 col : COLOR;
 				float3 normal : NORMAL;
 			};
 
 			sampler2D _MainTex;
+			sampler2D _DepthTex;
 			float4 _Color;
+			float _Displacement;
 
 			#define PI 3.141592653589793
 
@@ -44,9 +48,10 @@ Shader "Custom/Equirectangular3" {
 			VertexOutput vert(VertexInput v) {
 				VertexOutput o;
 				float2 equiUV = RadialCoords(v.normal);
-				float4 tex = tex2Dlod(_MainTex, float4(equiUV , 0, 0));
-				o.pos = float4(tex * v.normal, 1) * UnityObjectToClipPos(v.v);
-				//o.col = v.color;
+				float3 tex = tex2Dlod(_DepthTex, float4(equiUV, 0, 0));
+				o.pos = UnityObjectToClipPos(v.v);
+				o.pos += float4((v.normal * tex.xyz * _Displacement), 1);
+				o.col = v.color;
 				o.normal = v.normal;
 				return o;
 			}
