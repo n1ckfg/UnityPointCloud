@@ -1,6 +1,4 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-Shader "Custom/Equirectangular" {
+﻿Shader "Custom/Equirect_GLSL" {
 
     Properties {
         _MainTex ("Diffuse (RGB) Alpha (A)", 2D) = "gray" {}
