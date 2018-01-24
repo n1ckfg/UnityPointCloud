@@ -49,18 +49,17 @@ Shader "Custom/Equirect_Point" {
 			VertexOutput vert(VertexInput v) {
 				VertexOutput o;
 				float2 equiUV = RadialCoords(v.normal);
-				float3 tex = tex2Dlod(_DepthTex, float4(equiUV, 0, 0));
-                float4 p = float4(v.normal + tex.xyz * _Displacement, 1);
+                float4 tex1 = tex2Dlod(_MainTex, float4(equiUV, 0, 0));
+                float3 tex2 = tex2Dlod(_DepthTex, float4(equiUV, 0, 0));
+                float4 p = float4(v.normal + tex2.xyz * _Displacement, 1);
 				o.pos = UnityObjectToClipPos(v.v * p);
-				o.col = v.color;
-				o.normal = o.pos;//normal;
+                o.col = tex1;
+				o.normal = o.pos;
 				return o;
 			}
 
 			float4 frag(VertexOutput o) : COLOR {
-				float2 equiUV = RadialCoords(o.normal);
-                float4 tex = tex2D(_MainTex, equiUV);
-				return (tex + tex) * _Color;
+                return float4(o.normal,1) * _Color;
 			}
 
 			ENDCG

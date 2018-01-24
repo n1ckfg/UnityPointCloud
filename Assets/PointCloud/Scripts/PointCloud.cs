@@ -7,7 +7,7 @@ using System.Collections;
 [ExecuteInEditMode]
 public class PointCloud : MonoBehaviour {
 
-    public enum ShapeMode { CUBE, SPHERE };
+    public enum ShapeMode { CUBE, SPHERE, PLANE };
     public ShapeMode shapeMode = ShapeMode.SPHERE;
     public int numPoints = 60000;
     public Color color;
@@ -37,6 +37,8 @@ public class PointCloud : MonoBehaviour {
                 points[i] = p;
             } else if (shapeMode == ShapeMode.SPHERE) {
                 points[i] = sphereCoords(p); 
+            } else if (shapeMode == ShapeMode.PLANE) {
+                points[i] = new Vector3(p.x, 0f, p.z);
             }
 
             indices[i] = i;
