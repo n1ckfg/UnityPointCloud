@@ -1,4 +1,6 @@
-﻿Shader "Custom/DemoBRDF" {
+﻿// https://www.youtube.com/watch?v=_Y_0cgWu5bQ
+
+Shader "Custom/DemoBRDF" {
 	
 	Properties {
 		_Ramp2D("BRDF Ramp", 2D) = "gray" {}
