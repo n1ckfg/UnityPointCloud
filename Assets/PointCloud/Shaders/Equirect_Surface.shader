@@ -4,6 +4,8 @@ Shader "Custom/Equirect_Surface" {
 
     Properties {
 		_MainTex("Diffuse (RGB) Alpha (A)", 2D) = "gray" {}
+		_DispTex("Displacement Texture", 2D) = "gray" {}
+		_Displacement("Displacement", float) = 0.1
 		_Color("Color", Color) = (1.0, 1.0, 1.0, 1.0)
     }
 

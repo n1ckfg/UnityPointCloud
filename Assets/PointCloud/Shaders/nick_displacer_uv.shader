@@ -3,12 +3,12 @@ Shader "Nick/DisplacerUV"{
     Properties{
         _MainTex ("Texture", 2D) = "white" {}
         _DispTex ("Displacement Texture", 2D) = "gray" {}
-        _Displacement ("Displacement", Range(0, 1.0)) = 0.1
+        _Displacement ("Displacement", float) = 0.1
         _DispChannelFactor ("DispChannelFactor (r,g,b)", Vector) = (1,0,0)
         _Ctl ("Ctl", Vector) = (0, 0, 0)
-        _ChannelFactor ("ChannelFactor (r,g,b)", Vector) = (1,0,0)
-        _Range ("Range (min,max)", Vector) = (0,0.5,0)
-        _ClipRange ("ClipRange [0,1]", float) = 0.8
+        //_ChannelFactor ("ChannelFactor (r,g,b)", Vector) = (1,0,0)
+        //_Range ("Range (min,max)", Vector) = (0,0.5,0)
+        //_ClipRange ("ClipRange [0,1]", float) = 0.8
         //~~
 		//_SpecMap("Specular Map", 2D) = "black"{ }
 		//_SpecColor("Specular Color", Color) = (0.5, 0.5, 0.5, 1.0)
