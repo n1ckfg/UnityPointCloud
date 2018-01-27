@@ -51,7 +51,6 @@ Shader "Custom/PointCloud" {
 			// **************************************************************
 			// Shader Programs												*
 			// **************************************************************
-
 			// Vertex Shader ------------------------------------------------
 			GS_INPUT VS_Main(appdata_base v) {
 				GS_INPUT output = (GS_INPUT)0;
@@ -63,7 +62,6 @@ Shader "Custom/PointCloud" {
 				output.pos =  mul(unity_ObjectToWorld, v.vertex);
 				output.normal = v.normal;
 				output.tex0 = float2(0, 0);
-
 				return output;
 			}
 

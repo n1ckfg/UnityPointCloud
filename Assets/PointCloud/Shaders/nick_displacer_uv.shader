@@ -57,8 +57,8 @@ Shader "Nick/DisplacerUV"{
 		
 		void surf(Input IN, inout SurfaceOutput o){
 			//o.Albedo = 1;
-            float3 dcolor = tex2D(_DispTex, IN.uv_DispTex);
-            float d = (dcolor.r*_ChannelFactor.r + dcolor.g*_ChannelFactor.g + dcolor.b*_ChannelFactor.b);
+			float3 dcolor = tex2D(_DispTex, IN.uv_DispTex);
+			float d = (dcolor.r*_ChannelFactor.r + dcolor.g*_ChannelFactor.g + dcolor.b*_ChannelFactor.b);
 			fixed4 mainTex = tex2D(_MainTex, IN.uv_MainTex + fixed2(d * _Ctl.x, d * _Ctl.y));
 			//fixed4 bumpTex = tex2D(_BumpMap, IN.uv_BumpMap);
 			//fixed4 specTex = tex2D(_SpecMap, IN.uv_SpecMap);
