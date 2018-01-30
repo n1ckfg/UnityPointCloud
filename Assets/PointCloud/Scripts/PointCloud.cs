@@ -2,43 +2,73 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 [ExecuteInEditMode]
 public class PointCloud : MonoBehaviour {
 
-    public enum ShapeMode { CUBE, SPHERE, PLANE };
+    public enum ShapeMode { CUBE, SPHERE, PLANE, FILE };
     public ShapeMode shapeMode = ShapeMode.SPHERE;
+    public string fileName = "";
+    public string splitChar = " ";
     public int numPoints = 60000;
     public Color color;
 
     private Mesh mesh;
     private MeshFilter meshFilter;
     private float size = 1f;
+    private string url;
+    private List<Vector3> pointsFromFile;
 
     private void Awake() {
+        pointsFromFile = new List<Vector3>();
+
         if (mesh == null) mesh = new Mesh();
         meshFilter = GetComponent<MeshFilter>();
+
+        StartCoroutine(CreateMesh());
     }
 
-    private void Start() {
-        CreateMesh();
-    }
+    private IEnumerator CreateMesh() {
+        if (shapeMode == ShapeMode.FILE) {
+            url = "file://" + Path.Combine(Application.streamingAssetsPath, fileName);
 
-    private void CreateMesh() {
+            Debug.Log("Loading point cloud data from: \n" + url);
+            WWW www = new WWW(url);
+            yield return www;
+
+            string[] lines = www.text.Split('\n');
+            for (int i=0; i<lines.Length-1; i++) {
+                string[] vRaw = lines[i].Split(' ');
+                if (i < 10) Debug.Log(vRaw[0] + " " + vRaw[1] + " " + vRaw[2]);
+                string xS = vRaw[0];
+                string yS = vRaw[1];
+                string zS = vRaw[2];
+                float x = float.Parse(xS);
+                float y = float.Parse(yS);
+                float z = float.Parse(zS);
+                pointsFromFile.Add(new Vector3(x, y, z));
+            }
+            numPoints = pointsFromFile.Count;
+        }
+
         Vector3[] points = new Vector3[numPoints];
         int[] indices = new int[numPoints];
         Color[] colors = new Color[numPoints];
 
         for (int i = 0; i < points.Length; ++i) {
-            Vector3 p = new Vector3(Random.Range(-size, size), Random.Range(-size, size), Random.Range(-size, size));
-
             if (shapeMode == ShapeMode.CUBE) {
-                points[i] = p;
+                points[i] = randomPoint(size);
             } else if (shapeMode == ShapeMode.SPHERE) {
-                points[i] = sphereCoords(p); 
+                points[i] = sphereCoords(randomPoint(size)); 
             } else if (shapeMode == ShapeMode.PLANE) {
+                Vector3 p = randomPoint(size);
                 points[i] = new Vector3(p.x, 0f, p.z);
+            } else if (shapeMode == ShapeMode.FILE) {
+                points[i] = pointsFromFile[i];
             }
 
             indices[i] = i;
@@ -49,6 +79,12 @@ public class PointCloud : MonoBehaviour {
         mesh.colors = colors;
         mesh.SetIndices(indices, MeshTopology.Points, 0);
         meshFilter.mesh = mesh;
+
+        yield return null;
+    }
+
+    private Vector3 randomPoint(float size) {
+        return new Vector3(UnityEngine.Random.Range(-size, size), UnityEngine.Random.Range(-size, size), UnityEngine.Random.Range(-size, size));
     }
 
     private Vector3 sphereCoords(Vector3 a_coords_n) {
