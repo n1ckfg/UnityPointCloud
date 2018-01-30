@@ -40,18 +40,44 @@ public class PointCloud : MonoBehaviour {
             WWW www = new WWW(url);
             yield return www;
 
-            string[] lines = www.text.Split('\n');
-            for (int i=0; i<lines.Length-1; i++) {
-                string[] vRaw = lines[i].Split(' ');
-                if (i < 10) Debug.Log(vRaw[0] + " " + vRaw[1] + " " + vRaw[2]);
-                string xS = vRaw[0];
-                string yS = vRaw[1];
-                string zS = vRaw[2];
-                float x = float.Parse(xS);
-                float y = float.Parse(yS);
-                float z = float.Parse(zS);
-                pointsFromFile.Add(new Vector3(x, y, z));
+            string[] fileNameExt = fileName.Split('.');
+            string extension = fileNameExt[fileNameExt.Length-1];
+
+            if (extension == "bin") {
+                byte[] bytes = www.bytes;
+                for (int i = 0; i < bytes.Length; i += 16) {
+                    /*
+                    byte[] bytesX = { bytes[i], bytes[i + 1], bytes[i + 2], bytes[i + 3] };
+                    byte[] bytesY = { bytes[i + 4], bytes[i + 5], bytes[i + 6], bytes[i + 7] };
+                    byte[] bytesZ = { bytes[i + 8], bytes[i + 9], bytes[i + 10], bytes[i + 11] };
+                    byte[] bytesW = { bytes[i + 12], bytes[i + 13], bytes[i + 14], bytes[i + 15] };
+
+                    float x = System.BitConverter.ToSingle(bytesX, 0);
+                    float y = System.BitConverter.ToSingle(bytesY, 0);
+                    float z = System.BitConverter.ToSingle(bytesZ, 0);
+                    float w = System.BitConverter.ToSingle(bytesW, 0);
+                    */
+                    float x = System.BitConverter.ToSingle(bytes, i);
+                    float y = System.BitConverter.ToSingle(bytes, i+4);
+                    float z = System.BitConverter.ToSingle(bytes, i+8);
+                    float w = System.BitConverter.ToSingle(bytes, i+12);
+                    pointsFromFile.Add(new Vector3(x, y, z));
+                }
+            } else {
+                string[] lines = www.text.Split('\n');
+                for (int i = 0; i < lines.Length - 1; i++) {
+                    string[] vRaw = lines[i].Split(splitChar.ToCharArray()[0]);
+                    if (i < 10) Debug.Log(vRaw[0] + " " + vRaw[1] + " " + vRaw[2]);
+                    string xS = vRaw[0];
+                    string yS = vRaw[1];
+                    string zS = vRaw[2];
+                    float x = float.Parse(xS);
+                    float y = float.Parse(yS);
+                    float z = float.Parse(zS);
+                    pointsFromFile.Add(new Vector3(x, y, z));
+                }
             }
+
             numPoints = pointsFromFile.Count;
         }
 
