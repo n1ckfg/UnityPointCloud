@@ -4,7 +4,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 [ExecuteInEditMode]
@@ -89,7 +88,7 @@ public class PointCloud : MonoBehaviour {
             if (shapeMode == ShapeMode.CUBE) {
                 points[i] = randomPoint(size);
             } else if (shapeMode == ShapeMode.SPHERE) {
-                points[i] = sphereCoords(randomPoint(size)); 
+                points[i] = Random.insideUnitSphere * size;
             } else if (shapeMode == ShapeMode.PLANE) {
                 Vector3 p = randomPoint(size);
                 points[i] = new Vector3(p.x, 0f, p.z);
@@ -105,20 +104,75 @@ public class PointCloud : MonoBehaviour {
         mesh.colors = colors;
         mesh.SetIndices(indices, MeshTopology.Points, 0);
         meshFilter.mesh = mesh;
+        createMeshNormals(mesh);
 
         yield return null;
     }
 
     private Vector3 randomPoint(float size) {
-        return new Vector3(UnityEngine.Random.Range(-size, size), UnityEngine.Random.Range(-size, size), UnityEngine.Random.Range(-size, size));
+        return new Vector3(Random.Range(-size, size), Random.Range(-size, size), Random.Range(-size, size));
     }
 
+    private void createMeshNormals(Mesh mesh) {
+        Vector3[] normals = mesh.normals;
+
+        //Quaternion rotation = Quaternion.AngleAxis(Time.deltaTime * 0.1f, Vector3.up);
+        for (int i = 0; i < normals.Length; i++) {
+            //normals[i] = rotation * normals[i];
+            normals[i] = randomPoint(1f);
+        }
+        mesh.normals = normals;
+    }
+
+    /*
     private Vector3 sphereCoords(Vector3 a_coords_n) {
         a_coords_n = Vector3.Normalize(a_coords_n);
         float lon = Mathf.Atan2(a_coords_n.z, a_coords_n.x);
-        float lat = Mathf.Acos(a_coords_n.y);
+        float lat = Mathf.Acos(a_coords_n.y); 
         Vector2 radialCoords = new Vector2(lon, lat) * (1f / Mathf.PI);
         return new Vector3(radialCoords.x, radialCoords.y, a_coords_n.z);
     }
+ 
+    List<Vector3> pointsOnSphere(float n) {
+        List<Vector3> points = new List<Vector3>();
+        float inc = Mathf.PI * (3f - Mathf.Sqrt(5));
+        float off = 2f / n;
+        float x;
+        float y;
+        float z;
+        float r;
+        float phi;
+
+        for (int k = 0; k < n; k++) {
+            y = k * off - 1 + (off / 2);
+            r = Mathf.Sqrt(1 - y * y);
+            phi = k * inc;
+            x = Mathf.Cos(phi) * r;
+            z = Mathf.Sin(phi) * r;
+
+            points.Add(new Vector3(x, y, z));
+        }
+        return points;
+    }
+
+    Vector3 pointOnSphere(float n) {
+        float inc = Mathf.PI * (3f - Mathf.Sqrt(5));
+        float off = 2f / n;
+        float x;
+        float y;
+        float z;
+        float r;
+        float phi;
+
+        int k = 0;
+        y = k * off - 1 + (off / 2);
+        r = Mathf.Sqrt(1 - y * y);
+        phi = k * inc;
+        x = Mathf.Cos(phi) * r;
+        z = Mathf.Sin(phi) * r;
+
+        return (new Vector3(x, y, z));
+    }
+    */
 
 }
