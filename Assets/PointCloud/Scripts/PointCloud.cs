@@ -12,7 +12,6 @@ public class PointCloud : MonoBehaviour {
     public enum ShapeMode { CUBE, SPHERE, PLANE, FILE };
     public ShapeMode shapeMode = ShapeMode.SPHERE;
     public string fileName = "";
-    public string splitChar = " ";
     public int numPoints = 60000;
     public Color color;
 
@@ -21,6 +20,7 @@ public class PointCloud : MonoBehaviour {
     private float size = 1f;
     private string url;
     private List<Vector3> pointsFromFile;
+    private string splitChar = " ";
 
     private void Awake() {
         pointsFromFile = new List<Vector3>();
@@ -64,16 +64,28 @@ public class PointCloud : MonoBehaviour {
                 }
             } else {
                 string[] lines = www.text.Split('\n');
-                for (int i = 0; i < lines.Length - 1; i++) {
-                    string[] vRaw = lines[i].Split(splitChar.ToCharArray()[0]);
-                    if (i < 10) Debug.Log(vRaw[0] + " " + vRaw[1] + " " + vRaw[2]);
-                    string xS = vRaw[0];
-                    string yS = vRaw[1];
-                    string zS = vRaw[2];
-                    float x = float.Parse(xS);
-                    float y = float.Parse(yS);
-                    float z = float.Parse(zS);
-                    pointsFromFile.Add(new Vector3(x, y, z));
+                if (extension == "csv") {
+                    for (int i = 1; i < lines.Length - 1; i++) {
+                        string[] vRaw = lines[i].Split(',');
+                        string xS = vRaw[1];
+                        string yS = vRaw[2];
+                        string zS = vRaw[3];
+                        float x = float.Parse(xS);
+                        float y = float.Parse(yS);
+                        float z = float.Parse(zS);
+                        pointsFromFile.Add(new Vector3(x, y, z));
+                    }
+                } else { // assume asc
+                    for (int i = 0; i < lines.Length - 1; i++) {
+                        string[] vRaw = lines[i].Split(splitChar.ToCharArray()[0]);
+                        string xS = vRaw[0];
+                        string yS = vRaw[1];
+                        string zS = vRaw[2];
+                        float x = float.Parse(xS);
+                        float y = float.Parse(yS);
+                        float z = float.Parse(zS);
+                        pointsFromFile.Add(new Vector3(x, y, z));
+                    }
                 }
             }
 
