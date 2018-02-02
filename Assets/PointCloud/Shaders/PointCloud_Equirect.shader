@@ -10,7 +10,7 @@ Shader "PointCloud/Equirect" {
 	Properties{
 		_SpriteTex("Sprite (RGB)", 2D) = "white" {}
 	_Size("Size", Range(0, 3)) = 0.5
-		_DispTex("Displacement Texture", 2D) = "gray" {}
+		_DispTex("Displacement Texture", 2D) = "white" {}
 	_Displacement("Displacement", float) = 0.1
 		_Color("Color", color) = (1,1,1,1)
 	}

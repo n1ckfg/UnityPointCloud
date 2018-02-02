@@ -10,9 +10,10 @@ Shader "PointCloud/VertexColor" {
 	Properties {
 		_SpriteTex ("Sprite (RGB)", 2D) = "white" {}
 		_Size ("Size", Range(0, 3)) = 0.5
-		_DispTex("Displacement Texture", 2D) = "gray" {}
+		_DispTex("Displacement Texture", 2D) = "white" {}
 		_Displacement("Displacement", float) = 0.1
 		_Color("Color", color) = (1,1,1,1)
+		_Emission("Emission", color) = (0,0,0,1)
 	}
 
 	SubShader {
@@ -53,6 +54,7 @@ Shader "PointCloud/VertexColor" {
 			sampler2D _DispTex;
 			float _Displacement;
 			float4 _Color;
+			float4 _Emission;
 
 			// **************************************************************
 			// Shader Programs												*
@@ -118,7 +120,7 @@ Shader "PointCloud/VertexColor" {
 
 			// Fragment Shader -----------------------------------------------
 			float4 FS_Main(FS_INPUT input) : COLOR {
-				return _SpriteTex.Sample(sampler_SpriteTex, input.tex0) * tex2D(_DispTex, input.tex1) * _Color;
+				return (_SpriteTex.Sample(sampler_SpriteTex, input.tex0) * tex2D(_DispTex, input.tex1) * _Color) + _Emission;
 			}
 
 			ENDCG
