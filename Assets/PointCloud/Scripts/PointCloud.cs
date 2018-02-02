@@ -127,11 +127,8 @@ public class PointCloud : MonoBehaviour {
 
     private void createMeshNormals(Mesh mesh) {
         Vector3[] normals = mesh.normals;
-
-        //Quaternion rotation = Quaternion.AngleAxis(Time.deltaTime * 0.1f, Vector3.up);
         for (int i = 0; i < normals.Length; i++) {
-            //normals[i] = rotation * normals[i];
-            normals[i] = randomPoint(1f);
+            normals[i] = new Vector3(0f, 1f, 0f);
         }
         mesh.normals = normals;
     }
