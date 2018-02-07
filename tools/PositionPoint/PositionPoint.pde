@@ -2,7 +2,7 @@ import peasy.*;
 
 PeasyCam cam;
 PImage img;
-int scaleImg = 3;
+int scaleImg = 4;
 int depth = 0;
 ArrayList<Dot> dots;
 

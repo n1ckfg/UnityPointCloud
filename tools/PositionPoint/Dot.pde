@@ -2,12 +2,16 @@ class Dot {
 
   PVector p, n, r, pn;
   color c;
+  float normalLength = 10;
  
   Dot(PVector _p, color _c) {
     p = _p;
     c = _c;
-    n = calcNormal(p);
-    r = radialCoords(n);
+
+    r = radialCoords(p);
+    n = calcNormal(r);
+    p = new PVector(r.x * (width/2), r.y * (height/2), map(p.z, 0, depth, -depth, depth));
+    pn = p.add(n.mult(normalLength));
   }
   
   void draw() {
@@ -17,11 +21,11 @@ class Dot {
     pushMatrix();
     translate(p.x, p.y, p.z);
     point(0,0);
-    popMatrix();
 
     strokeWeight(1);
     stroke(255, 0, 255, 63);
-    line(p.x, p.y, p.z, n.x, n.y, n.z);
+    line(0, 0, 0, pn.x, pn.y, pn.z);
+    popMatrix();
   }
  
   // https://stackoverflow.com/questions/47886195/360videoplayer-warped-in-unity
