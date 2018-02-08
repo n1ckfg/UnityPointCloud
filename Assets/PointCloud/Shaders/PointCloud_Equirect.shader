@@ -9,9 +9,9 @@ Shader "PointCloud/Equirect" {
 
 	Properties{
 		_SpriteTex("Sprite (RGB)", 2D) = "white" {}
-	_Size("Size", Range(0, 3)) = 0.5
+		_Size("Size", Range(0, 3)) = 0.5
 		_DispTex("Displacement Texture", 2D) = "white" {}
-	_Displacement("Displacement", float) = 0.1
+		_Displacement("Displacement", float) = 0.1
 		_Color("Color", color) = (1,1,1,1)
 	}
 
@@ -30,7 +30,7 @@ Shader "PointCloud/Equirect" {
 		// **************************************************************
 		// Data structures												*
 		// **************************************************************
-		struct GS_INPUT {
+	struct GS_INPUT {
 		float4	pos		: POSITION;
 		float3	normal	: NORMAL;
 		float2  tex0	: TEXCOORD0;
@@ -72,8 +72,10 @@ Shader "PointCloud/Equirect" {
 		GS_INPUT output = (GS_INPUT)0;
 
 		float d = tex2Dlod(_DispTex, float4(v.texcoord.xy, 0, 0)).a;
-		v.vertex.xyz += v.normal * d * _Displacement;
-
+		
+		v.vertex.xy += v.normal.xy * d * _Displacement;
+		v.vertex.z = d * _Displacement;
+		
 		output.pos = mul(unity_ObjectToWorld, v.vertex);
 		output.normal = v.normal;
 		output.tex0 = float2(0, 0);
