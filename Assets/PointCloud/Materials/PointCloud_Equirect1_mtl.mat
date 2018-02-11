@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: PointCloud_Equirect1_mtl
-  m_Shader: {fileID: 4800000, guid: 3528fff3537d15949b1d64514aba3370, type: 3}
+  m_Shader: {fileID: 4800000, guid: 483f9bb78a5c8ab48bd0770929ef93e8, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -35,7 +35,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DispTex:
-        m_Texture: {fileID: 2800000, guid: d342e605bb9403d4e925715c1ebf64cc, type: 3}
+        m_Texture: {fileID: 8900000, guid: 2bb22cec8c439a44e9a292fa08c936bd, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -43,7 +43,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: b897da9a571cc7142bfc5b4731f71290, type: 3}
+        m_Texture: {fileID: 2800000, guid: ed78c8bb97b7746369e46dd78e24612b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -63,12 +63,14 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _Alpha: 2.89
     - _Amount: 4.32
     - _BumpScale: 1
     - _Color: 1
     - _Cutoff: 0.5
+    - _Depth: 4.17
     - _DetailNormalMapScale: 1
-    - _Displacement: -0.24
+    - _Displacement: -13.43
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -77,7 +79,7 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _Size: 1
+    - _Size: 0.04
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
