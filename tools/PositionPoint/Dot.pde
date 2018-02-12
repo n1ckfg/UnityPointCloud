@@ -2,7 +2,7 @@ class Dot {
 
   PVector p, n, r, pn;
   color c;
-  float normalLength = 10;
+  float normalLength = 40;
  
   Dot(PVector _p, color _c) {
     p = _p;
@@ -10,8 +10,9 @@ class Dot {
 
     r = radialCoords(p);
     n = calcNormal(r);
-    p = new PVector(r.x * (width/2), r.y * (height/2), map(p.z, 0, depth, -depth, depth));
-    pn = p.add(n.mult(normalLength));
+    p = new PVector((p.x * width) - (width/2), (p.y * height) - (height/2), getDepth(p.z));
+    pn = n.mult(normalLength);
+    
   }
   
   void draw() {
@@ -35,6 +36,12 @@ class Dot {
     float lat = acos(a_coords_n.y);
     PVector sphereCoords = new PVector(lon, lat).mult(1.0 / PI);
     return new PVector(sphereCoords.x * 0.5 + 0.5, 1 - sphereCoords.y);
+  }
+  
+  float getDepth(float d) {
+    float baseline_length = 0.5;
+    float spherical_angle = 10;
+    return asin(baseline_length * sin(spherical_angle)) / asin(d);
   }
   
   // https://stackoverflow.com/questions/39292925/glsl-calculating-normal-on-a-sphere-mesh-in-vertex-shader-using-noise-function-b

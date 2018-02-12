@@ -26,7 +26,8 @@ void setup() {
       int loc = x + y * (img.width);
       float xf = float(x);
       float yf = float(y);
-      float zf = (red(img.pixels[loc]) / 255) * depth;
+      float zf = (red(img.pixels[loc]) / 255 * depth) - (depth/2);
+      println(xf + " " + yf + " " + zf);
       PVector p = new PVector(xf, yf, zf);
       dots.add(new Dot(p, color(img.pixels[loc])));
     }
