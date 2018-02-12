@@ -9,9 +9,10 @@ using System.IO;
 [ExecuteInEditMode]
 public class PointCloud : MonoBehaviour {
 
-    public enum ShapeMode { CUBE, SPHERE, PLANE, FILE };
+    public enum ShapeMode { CUBE, SPHERE, PLANE, FILE, MESH };
     public ShapeMode shapeMode = ShapeMode.SPHERE;
     public string fileName = "";
+    public Mesh referenceMesh;
     public int numPoints = 60000;
     public Color color;
 
@@ -22,10 +23,15 @@ public class PointCloud : MonoBehaviour {
     private List<Vector3> pointsFromFile;
     private string splitChar = " ";
 
+    private Vector3[] points;
+    private Vector3[] normals;
+    private int[] indices;
+    private Color[] colors;
+    private Vector2[] uvs;
+
     private void Awake() {
         pointsFromFile = new List<Vector3>();
-
-        if (mesh == null) mesh = new Mesh();
+        mesh = new Mesh();
         meshFilter = GetComponent<MeshFilter>();
 
         StartCoroutine(CreateMesh());
@@ -40,7 +46,7 @@ public class PointCloud : MonoBehaviour {
             yield return www;
 
             string[] fileNameExt = fileName.Split('.');
-            string extension = fileNameExt[fileNameExt.Length-1];
+            string extension = fileNameExt[fileNameExt.Length - 1];
 
             if (extension == "bin") {
                 byte[] bytes = www.bytes;
@@ -57,9 +63,9 @@ public class PointCloud : MonoBehaviour {
                     float w = System.BitConverter.ToSingle(bytesW, 0);
                     */
                     float x = System.BitConverter.ToSingle(bytes, i);
-                    float y = System.BitConverter.ToSingle(bytes, i+4);
-                    float z = System.BitConverter.ToSingle(bytes, i+8);
-                    float w = System.BitConverter.ToSingle(bytes, i+12);
+                    float y = System.BitConverter.ToSingle(bytes, i + 4);
+                    float z = System.BitConverter.ToSingle(bytes, i + 8);
+                    float w = System.BitConverter.ToSingle(bytes, i + 12);
                     pointsFromFile.Add(new Vector3(x, y, z));
                 }
             } else {
@@ -90,11 +96,15 @@ public class PointCloud : MonoBehaviour {
             }
 
             numPoints = pointsFromFile.Count;
+        } else if (shapeMode == ShapeMode.MESH) {
+            numPoints = referenceMesh.vertices.Length;
         }
 
-        Vector3[] points = new Vector3[numPoints];
-        int[] indices = new int[numPoints];
-        Color[] colors = new Color[numPoints];
+        points = new Vector3[numPoints];
+        normals = new Vector3[numPoints];
+        indices = new int[numPoints];
+        colors = new Color[numPoints];
+        uvs = new Vector2[numPoints];
 
         for (int i = 0; i < points.Length; ++i) {
             if (shapeMode == ShapeMode.CUBE) {
@@ -104,19 +114,27 @@ public class PointCloud : MonoBehaviour {
             } else if (shapeMode == ShapeMode.PLANE) {
                 Vector3 p = randomPoint(size);
                 points[i] = new Vector3(p.x, 0f, p.z);
-            } else if (shapeMode == ShapeMode.FILE) {
-                points[i] = pointsFromFile[i];
             }
 
             indices[i] = i;
             colors[i] = color; // new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1.0f);
         }
 
+        if (shapeMode == ShapeMode.FILE) {
+            points = pointsFromFile.ToArray();
+        } else if (shapeMode == ShapeMode.MESH) {
+            points = referenceMesh.vertices;
+            normals = referenceMesh.normals;
+            uvs = referenceMesh.uv;
+        }
+
         mesh.vertices = points;
+        mesh.normals = normals;
         mesh.colors = colors;
+        mesh.uv = uvs;
         mesh.SetIndices(indices, MeshTopology.Points, 0);
+
         meshFilter.mesh = mesh;
-        createMeshNormals(mesh);
 
         yield return null;
     }
@@ -125,12 +143,39 @@ public class PointCloud : MonoBehaviour {
         return new Vector3(Random.Range(-size, size), Random.Range(-size, size), Random.Range(-size, size));
     }
 
-    private void createMeshNormals(Mesh mesh) {
-        Vector3[] normals = mesh.normals;
-        for (int i = 0; i < normals.Length; i++) {
-            normals[i] = new Vector3(0f, 1f, 0f);
+    private Vector2[] createMeshUvs(Mesh mesh) {
+        Vector2[] returns = new Vector2[mesh.vertices.Length];
+        for (int i = 0; i < returns.Length; i++) {
+            returns[i] = new Vector2(mesh.normals[i].x, mesh.normals[i].y); // TODO replace temp
         }
-        mesh.normals = normals;
+        return returns;
+    }
+
+    private Vector3[] createMeshNormals(Mesh mesh) {
+        Vector3[] returns = new Vector3[mesh.vertices.Length];
+        for (int i = 0; i < returns.Length-1; i++) {
+            returns[i] = calculateNormal(mesh.vertices[i], mesh.vertices[i + 1]);
+        }
+        return returns;
+    }
+
+    // https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal
+    private Vector3 calculateNormal(Vector3 v1, Vector3 v2) {
+        Vector3 returns = Vector3.zero;
+        //returns.x += (v1.y -v2.y) * (v1.z + v2.z);
+        //returns.y += (v1.z -v2.z) * (v1.x + v2.x);
+        //returns.z += (v1.x -v2.x) * (v1.y + v2.y);
+        return Vector3.Normalize(returns);
+    }
+
+    private void CreateMeshFromReference() {
+        mesh = new Mesh();
+        mesh.vertices = referenceMesh.vertices;
+        mesh.uv = referenceMesh.uv;
+        mesh.normals = referenceMesh.normals;
+        mesh.uv2 = referenceMesh.uv2;
+        mesh.triangles = referenceMesh.triangles;
+        meshFilter.mesh = mesh;
     }
 
     /*

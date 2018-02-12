@@ -12,7 +12,8 @@ Shader "PointCloud/Equirect" {
 		_Size("Size", Range(0, 3)) = 0.5
 		_DispTex("Displacement Texture", 2D) = "white" {}
 		_Displacement("Displacement", float) = 0.1
-		_Threshold("Threshold", float) = 0.1
+		_BaselineLength("Baseline Length", float) = 0.5
+		_SphericalAngle("Spherical Angle", float) = 10.0
 		_Color("Color", color) = (1,1,1,1)
 	}
 
@@ -53,7 +54,8 @@ Shader "PointCloud/Equirect" {
 	SamplerState sampler_SpriteTex;
 	sampler2D _DispTex;
 	float _Displacement;
-	float _Threshold;
+	float _BaselineLength;
+	float _SphericalAngle;
 	float4 _Color;
 
 	// **************************************************************
@@ -69,14 +71,17 @@ Shader "PointCloud/Equirect" {
 		return float2(sphereCoords.x * 0.5 + 0.5, 1 - sphereCoords.y);
 	}
 
+	inline float getDepth(float d) {
+		float baseline_length = _BaselineLength;
+		float spherical_angle = _SphericalAngle;
+		return asin(baseline_length * sin(spherical_angle)) / asin(d);
+	}
+
 	// Vertex Shader ------------------------------------------------
 	GS_INPUT VS_Main(appdata_base v) {
 		GS_INPUT output = (GS_INPUT)0;
 
-		float d = tex2Dlod(_DispTex, float4(v.texcoord.xy, 0, 0)).a;
-		
-		//if (d < _Threshold) d = 0;
-		v.vertex.xyz += v.normal * d * _Displacement;
+		v.vertex.xyz = v.normal * getDepth(tex2Dlod(_DispTex, float4(v.texcoord.xy, 0, 0)).a) * _Displacement;
 		
 		output.pos = mul(unity_ObjectToWorld, v.vertex);
 		output.normal = v.normal;
