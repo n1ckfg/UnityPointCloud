@@ -3,17 +3,13 @@
 // Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 // https://issuetracker.unity3d.com/issues/upgrade-note-replaced-mul-unity-matrix-mvp-star-with-unityobjecttoclippos-star-faulty-replacement-breaking-shader
 
-// // https://blog.sketchfab.com/tutorial-processing-point-cloud-data-unity/
+// https://forum.unity.com/threads/billboard-geometry-shader.169415/
 
-Shader "PointCloud/VertexColor" {
+Shader "Custom/GS Billboard" {
 	
 	Properties {
-		_SpriteTex ("Sprite (RGB)", 2D) = "white" {}
+		_SpriteTex ("Base (RGB)", 2D) = "white" {}
 		_Size ("Size", Range(0, 3)) = 0.5
-		_DispTex("Displacement Texture", 2D) = "white" {}
-		_Displacement("Displacement", float) = 0.1
-		_Color("Color", color) = (1,1,1,1)
-		_Emission("Emission", color) = (0,0,0,1)
 	}
 
 	SubShader {
@@ -35,41 +31,35 @@ Shader "PointCloud/VertexColor" {
 				float4	pos		: POSITION;
 				float3	normal	: NORMAL;
 				float2  tex0	: TEXCOORD0;
-				float2  tex1	: TEXCOORD1;
-		};
+			};
 
 			struct FS_INPUT {
 				float4	pos		: POSITION;
 				float2  tex0	: TEXCOORD0;
-				float2  tex1	: TEXCOORD1;
 			};
+
 
 			// **************************************************************
 			// Vars															*
 			// **************************************************************
+
 			float _Size;
 			float4x4 _VP;
 			Texture2D _SpriteTex;
 			SamplerState sampler_SpriteTex;
-			sampler2D _DispTex;
-			float _Displacement;
-			float4 _Color;
-			float4 _Emission;
 
 			// **************************************************************
 			// Shader Programs												*
 			// **************************************************************
+
 			// Vertex Shader ------------------------------------------------
 			GS_INPUT VS_Main(appdata_base v) {
 				GS_INPUT output = (GS_INPUT)0;
 
-				float d = tex2Dlod(_DispTex, float4(v.texcoord.xy, 0, 0)).a;
-				v.vertex.xyz += v.normal * d * _Displacement;
-
 				output.pos =  mul(unity_ObjectToWorld, v.vertex);
 				output.normal = v.normal;
 				output.tex0 = float2(0, 0);
-				output.tex1 = v.texcoord.xy;
+
 				return output;
 			}
 
@@ -99,8 +89,6 @@ Shader "PointCloud/VertexColor" {
 				#endif
 				#endif
 				FS_INPUT pIn;
-				pIn.tex1 = p[0].tex1;
-
 				pIn.pos = mul(vp, v[0]);
 				pIn.tex0 = float2(1.0f, 0.0f);
 				triStream.Append(pIn);
@@ -120,7 +108,7 @@ Shader "PointCloud/VertexColor" {
 
 			// Fragment Shader -----------------------------------------------
 			float4 FS_Main(FS_INPUT input) : COLOR {
-				return (_SpriteTex.Sample(sampler_SpriteTex, input.tex0) * tex2D(_DispTex, input.tex1) * _Color) + _Emission;
+				return _SpriteTex.Sample(sampler_SpriteTex, input.tex0);
 			}
 
 			ENDCG

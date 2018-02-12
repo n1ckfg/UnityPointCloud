@@ -1,4 +1,4 @@
-Shader "Nick/DisplacerRGBA"{
+Shader "PointCloud/Displacer/RGBA"{
     
     Properties{
         _MainTex ("Texture", 2D) = "white" {}
@@ -24,7 +24,7 @@ Shader "Nick/DisplacerRGBA"{
         };
 
         void disp (inout appdata_full v){
-            v.vertex.xyz += v.normal * tex2Dlod(_MainTex, float4(v.texcoord.xy, 0, 0)).r * _Displacement;
+            v.vertex.xyz += v.normal * tex2Dlod(_MainTex, float4(v.texcoord.xy, 0, 0)).a * _Displacement;
         }
  
 		void surf(Input IN, inout SurfaceOutput o){

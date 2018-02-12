@@ -5,14 +5,16 @@
 
 // // https://blog.sketchfab.com/tutorial-processing-point-cloud-data-unity/
 
-Shader "PointCloud/Cubemap" {
+Shader "PointCloud/DX/Equirect" {
 
 	Properties{
 		_SpriteTex("Sprite (RGB)", 2D) = "white" {}
 		_Size("Size", Range(0, 3)) = 0.5
-		_DispTex("Displacement Texture", CUBE) = "white" {}
+		_DispTex("Displacement Texture", 2D) = "white" {}
 		_Displacement("Displacement", float) = 0.1
-		_Threshold("Threshold", float) = 0.1
+		_Maximum("Maximum", float) = 99.0
+		_BaselineLength("Baseline Length", float) = 0.5
+		_SphericalAngle("Spherical Angle", float) = 10.0
 		_Color("Color", color) = (1,1,1,1)
 	}
 
@@ -35,13 +37,13 @@ Shader "PointCloud/Cubemap" {
 		float4	pos		: POSITION;
 		float3	normal	: NORMAL;
 		float2  tex0	: TEXCOORD0;
-		float3  tex1	: TEXCOORD1;
+		float2  tex1	: TEXCOORD1;
 	};
 
 	struct FS_INPUT {
 		float4	pos		: POSITION;
 		float2  tex0	: TEXCOORD0;
-		float3  tex1	: TEXCOORD1;
+		float2  tex1	: TEXCOORD1;
 	};
 
 	// **************************************************************
@@ -51,9 +53,11 @@ Shader "PointCloud/Cubemap" {
 	float4x4 _VP;
 	Texture2D _SpriteTex;
 	SamplerState sampler_SpriteTex;
-	samplerCUBE _DispTex;
+	sampler2D _DispTex;
 	float _Displacement;
-	float _Threshold;
+	float _Maximum;
+	float _BaselineLength;
+	float _SphericalAngle;
 	float4 _Color;
 
 	// **************************************************************
@@ -69,19 +73,19 @@ Shader "PointCloud/Cubemap" {
 		return float2(sphereCoords.x * 0.5 + 0.5, 1 - sphereCoords.y);
 	}
 
+	inline float getDepthSpherical(float d) {
+		return asin(_BaselineLength * sin(_SphericalAngle)) / asin(d);
+	}
+
 	// Vertex Shader ------------------------------------------------
 	GS_INPUT VS_Main(appdata_base v) {
 		GS_INPUT output = (GS_INPUT)0;
-
-		float d = texCUBElod(_DispTex, float4(v.texcoord.xyz, 3)).a;
-		
-		//if (d < _Threshold) d = 0;
-		v.vertex.xyz += v.normal * d * _Displacement;
+		v.vertex.xyz = v.normal * clamp(getDepthSpherical(tex2Dlod(_DispTex, float4(v.texcoord.xy, 0, 0)).a), -_Maximum, 0) * _Displacement;
 		
 		output.pos = mul(unity_ObjectToWorld, v.vertex);
 		output.normal = v.normal;
 		output.tex0 = float2(0, 0);
-		output.tex1 = v.texcoord.xyz;
+		output.tex1 = v.texcoord.xy;
 		return output;
 	}
 
@@ -132,7 +136,7 @@ Shader "PointCloud/Cubemap" {
 
 	// Fragment Shader -----------------------------------------------
 	float4 FS_Main(FS_INPUT input) : COLOR{
-		return _SpriteTex.Sample(sampler_SpriteTex, input.tex0) * texCUBE(_DispTex, input.tex1) * _Color;
+		return _SpriteTex.Sample(sampler_SpriteTex, input.tex0) * tex2D(_DispTex, input.tex1) * _Color;
 	}
 
 		ENDCG

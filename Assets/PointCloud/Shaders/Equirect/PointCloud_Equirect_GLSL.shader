@@ -1,4 +1,4 @@
-﻿Shader "Custom/Equirect_GLSL" {
+﻿Shader "PointCloud/Equirect/GLSL" {
 
     Properties {
         _MainTex ("Diffuse (RGB) Alpha (A)", 2D) = "gray" {}
@@ -7,7 +7,7 @@
     SubShader {
         Pass {
             Tags { "LightMode" = "Always" }
-            Cull front //Added by me
+            Cull Front
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag

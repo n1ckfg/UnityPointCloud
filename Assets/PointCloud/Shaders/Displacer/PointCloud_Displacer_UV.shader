@@ -1,4 +1,4 @@
-Shader "Nick/DisplacerUV"{
+Shader "PointCloud/Displacer/RGBA_UV"{
     
     Properties{
         _MainTex ("Texture", 2D) = "white" {}

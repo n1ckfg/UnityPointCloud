@@ -1,40 +1,36 @@
 ﻿// http://www.kamend.com/2014/05/rendering-a-point-cloud-inside-unity/
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "Custom/Equirect_Point" {
+Shader "PointCloud/Equirect/Surface" {
 
     Properties {
-		_MainTex("Diffuse RGBA", 2D) = "gray" {}
-		_DepthTex("Depth", 2D) = "gray" {}
+		_MainTex("Diffuse (RGB) Alpha (A)", 2D) = "gray" {}
+		_DispTex("Displacement Texture", 2D) = "gray" {}
+		_Displacement("Displacement", float) = 0.1
 		_Color("Color", Color) = (1.0, 1.0, 1.0, 1.0)
-		_Displacement("Displacement", float) = 1.0
-	}
+    }
 
 	SubShader {
-        Pass {
+		Pass {
 			LOD 200
 
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-            #include "UnityCG.cginc"
 
 			struct VertexInput {
 				float4 v : POSITION;
-				float4 color: COLOR;
+				//float4 color: COLOR;
 				float3 normal: NORMAL;
 			};
 
 			struct VertexOutput {
 				float4 pos : SV_POSITION;
-				float4 col : COLOR;
+				//float4 col : COLOR;
 				float3 normal : NORMAL;
 			};
 
 			sampler2D _MainTex;
-			sampler2D _DepthTex;
 			float4 _Color;
-			float _Displacement;
 
 			#define PI 3.141592653589793
 
@@ -48,18 +44,15 @@ Shader "Custom/Equirect_Point" {
 
 			VertexOutput vert(VertexInput v) {
 				VertexOutput o;
-				float2 equiUV = RadialCoords(v.normal);
-                float4 tex1 = tex2Dlod(_MainTex, float4(equiUV, 0, 0));
-                float3 tex2 = tex2Dlod(_DepthTex, float4(equiUV, 0, 0));
-                float4 p = float4(v.normal + tex2.xyz * _Displacement, 1);
-				o.pos = UnityObjectToClipPos(v.v * p);
-                o.col = tex1;
-				o.normal = o.pos;
+				o.pos = UnityObjectToClipPos(v.v);
+				//o.col = v.color;
+				o.normal = v.normal;
 				return o;
 			}
 
 			float4 frag(VertexOutput o) : COLOR {
-                return float4(o.normal,1) * _Color;
+				float2 equiUV = RadialCoords(o.normal);
+				return tex2D(_MainTex, equiUV) * _Color;
 			}
 
 			ENDCG

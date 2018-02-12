@@ -1,4 +1,4 @@
-Shader "Nick/Displacer2"{
+Shader "PointCloud/Displacer/Basic"{
     
     Properties{
         _MainTex ("Texture", 2D) = "white" {}

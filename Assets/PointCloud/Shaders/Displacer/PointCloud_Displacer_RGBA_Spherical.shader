@@ -1,15 +1,16 @@
-Shader "Nick/DisplacerRGBASpherical"{
+Shader "PointCloud/Displacer/RGBA_Spherical"{
     
     Properties{
         _MainTex ("Texture", 2D) = "white" {}
         _Displacement ("Displacement", float) = 0.1
+		_Maximum("Maximum", float) = 99.0
 		_BaselineLength("Baseline Length", float) = 0.5
 		_SphericalAngle("Spherical Angle", float) = 10.0 
 	}
  
     SubShader{
         Tags { "RenderType"="Opaque" }
-        Cull Front
+        Cull Back
         Lighting Off 
         LOD 300
  
@@ -22,6 +23,7 @@ Shader "Nick/DisplacerRGBASpherical"{
         float _Displacement;
 		float _BaselineLength;
 		float _SphericalAngle;
+		float _Maximum;
 
         struct Input{
 			float2 uv_MainTex;
@@ -32,7 +34,7 @@ Shader "Nick/DisplacerRGBASpherical"{
 		}
 
         void disp (inout appdata_full v){
-            v.vertex.xyz = v.normal * getDepthSpherical(tex2Dlod(_MainTex, float4(v.texcoord.xy, 0, 0)).a) * _Displacement;
+            v.vertex.xyz = v.normal * clamp(getDepthSpherical(tex2Dlod(_MainTex, float4(v.texcoord.xy, 0, 0)).a), -_Maximum, 0) * _Displacement;
         }
  
 		void surf(Input IN, inout SurfaceOutput o){

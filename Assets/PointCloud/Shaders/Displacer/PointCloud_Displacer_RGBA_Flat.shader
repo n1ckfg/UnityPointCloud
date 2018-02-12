@@ -1,4 +1,4 @@
-Shader "Nick/DisplacerRGBAFlat"{
+Shader "PointCloud/Displacer/RGBA_Flat"{
     
     Properties{
         _MainTex ("Texture", 2D) = "white" {}

@@ -11,6 +11,8 @@ public class PointCloud : MonoBehaviour {
 
     public enum ShapeMode { CUBE, SPHERE, PLANE, FILE, MESH };
     public ShapeMode shapeMode = ShapeMode.SPHERE;
+    public enum MeshMode { POINTS, LINES, LINESTRIP, QUADS, TRIANGLES };
+    public MeshMode meshMode = MeshMode.POINTS;
     public string fileName = "";
     public Mesh referenceMesh;
     public int numPoints = 60000;
@@ -20,17 +22,18 @@ public class PointCloud : MonoBehaviour {
     private MeshFilter meshFilter;
     private float size = 1f;
     private string url;
-    private List<Vector3> pointsFromFile;
+    private List<Vector3> verticesFromFile;
     private string splitChar = " ";
 
-    private Vector3[] points;
+    private Vector3[] vertices;
     private Vector3[] normals;
     private int[] indices;
     private Color[] colors;
     private Vector2[] uvs;
+    private Bounds bounds;
 
     private void Awake() {
-        pointsFromFile = new List<Vector3>();
+        verticesFromFile = new List<Vector3>();
         mesh = new Mesh();
         meshFilter = GetComponent<MeshFilter>();
 
@@ -66,7 +69,7 @@ public class PointCloud : MonoBehaviour {
                     float y = System.BitConverter.ToSingle(bytes, i + 4);
                     float z = System.BitConverter.ToSingle(bytes, i + 8);
                     float w = System.BitConverter.ToSingle(bytes, i + 12);
-                    pointsFromFile.Add(new Vector3(x, y, z));
+                    verticesFromFile.Add(new Vector3(x, y, z));
                 }
             } else {
                 string[] lines = www.text.Split('\n');
@@ -79,7 +82,7 @@ public class PointCloud : MonoBehaviour {
                         float x = float.Parse(xS);
                         float y = float.Parse(yS);
                         float z = float.Parse(zS);
-                        pointsFromFile.Add(new Vector3(x, y, z));
+                        verticesFromFile.Add(new Vector3(x, y, z));
                     }
                 } else { // assume asc
                     for (int i = 0; i < lines.Length - 1; i++) {
@@ -90,30 +93,30 @@ public class PointCloud : MonoBehaviour {
                         float x = float.Parse(xS);
                         float y = float.Parse(yS);
                         float z = float.Parse(zS);
-                        pointsFromFile.Add(new Vector3(x, y, z));
+                        verticesFromFile.Add(new Vector3(x, y, z));
                     }
                 }
             }
 
-            numPoints = pointsFromFile.Count;
+            numPoints = verticesFromFile.Count;
         } else if (shapeMode == ShapeMode.MESH) {
             numPoints = referenceMesh.vertices.Length;
         }
 
-        points = new Vector3[numPoints];
+        vertices = new Vector3[numPoints];
         normals = new Vector3[numPoints];
         indices = new int[numPoints];
         colors = new Color[numPoints];
         uvs = new Vector2[numPoints];
 
-        for (int i = 0; i < points.Length; ++i) {
+        for (int i = 0; i < vertices.Length; ++i) {
             if (shapeMode == ShapeMode.CUBE) {
-                points[i] = randomPoint(size);
+                vertices[i] = randomPoint(size);
             } else if (shapeMode == ShapeMode.SPHERE) {
-                points[i] = Random.insideUnitSphere * size;
+                vertices[i] = Random.insideUnitSphere * size;
             } else if (shapeMode == ShapeMode.PLANE) {
                 Vector3 p = randomPoint(size);
-                points[i] = new Vector3(p.x, 0f, p.z);
+                vertices[i] = new Vector3(p.x, 0f, p.z);
             }
 
             indices[i] = i;
@@ -121,18 +124,40 @@ public class PointCloud : MonoBehaviour {
         }
 
         if (shapeMode == ShapeMode.FILE) {
-            points = pointsFromFile.ToArray();
+            vertices = verticesFromFile.ToArray();
         } else if (shapeMode == ShapeMode.MESH) {
-            points = referenceMesh.vertices;
+            vertices = referenceMesh.vertices;
             normals = referenceMesh.normals;
             uvs = referenceMesh.uv;
         }
 
-        mesh.vertices = points;
+        mesh.vertices = vertices;
         mesh.normals = normals;
         mesh.colors = colors;
         mesh.uv = uvs;
-        mesh.SetIndices(indices, MeshTopology.Points, 0);
+
+        switch(meshMode) {
+            case (MeshMode.POINTS):
+                mesh.SetIndices(indices, MeshTopology.Points, 0);
+                break;
+            case (MeshMode.LINES):
+                mesh.SetIndices(indices, MeshTopology.Lines, 0);
+                break;
+            case (MeshMode.LINESTRIP):
+                mesh.SetIndices(indices, MeshTopology.LineStrip, 0);
+                break;
+            case (MeshMode.QUADS):
+                mesh.SetIndices(indices, MeshTopology.Quads, 0);
+                break;
+            case (MeshMode.TRIANGLES):
+                if (indices.Length % 3 == 0) { 
+                    mesh.SetIndices(indices, MeshTopology.Triangles, 0);
+                } else {
+                    mesh.SetIndices(indices, MeshTopology.Quads, 0);
+                }
+                break;
+        }
+        mesh.RecalculateBounds();
 
         meshFilter.mesh = mesh;
 
@@ -188,7 +213,7 @@ public class PointCloud : MonoBehaviour {
     }
  
     List<Vector3> pointsOnSphere(float n) {
-        List<Vector3> points = new List<Vector3>();
+        List<Vector3> vertices = new List<Vector3>();
         float inc = Mathf.PI * (3f - Mathf.Sqrt(5));
         float off = 2f / n;
         float x;
@@ -204,9 +229,9 @@ public class PointCloud : MonoBehaviour {
             x = Mathf.Cos(phi) * r;
             z = Mathf.Sin(phi) * r;
 
-            points.Add(new Vector3(x, y, z));
+            vertices.Add(new Vector3(x, y, z));
         }
-        return points;
+        return vertices;
     }
 
     Vector3 pointOnSphere(float n) {
@@ -228,5 +253,13 @@ public class PointCloud : MonoBehaviour {
         return (new Vector3(x, y, z));
     }
     */
+
+    // https://docs.unity3d.com/ScriptReference/Mesh-bounds.html
+    Vector2[] planarUVs() {
+        for (int i=0; i < uvs.Length; i++) {
+            uvs[i] = new Vector2(vertices[i].x / bounds.size.x, vertices[i].z / bounds.size.x);
+        }
+        return uvs;
+    }
 
 }
