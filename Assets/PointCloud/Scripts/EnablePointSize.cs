@@ -1,4 +1,5 @@
 ﻿// http://www.kamend.com/2014/05/rendering-a-point-cloud-inside-unity/
+// https://github.com/srv/arsea/blob/master/Assets/Scripts/EnablePointSize.cs
 
 #if UNITY_STANDALONE
 #define IMPORT_GLENABLE
