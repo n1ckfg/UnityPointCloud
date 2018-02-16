@@ -67,7 +67,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _BaselineLength: 0.53
+    - _BaselineLength: 0.5
     - _BumpScale: 1
     - _ClipRange: -3.98
     - _Cutoff: 0.5
@@ -78,7 +78,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Maximum: 4.02
+    - _Maximum: 3.89
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
