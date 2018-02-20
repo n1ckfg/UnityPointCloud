@@ -5,7 +5,8 @@ Shader "PointCloud/Displacer/Spherical_OU"{
         _Displacement ("Displacement", float) = 0.1
 		_Maximum("Maximum", float) = 99.0
 		_BaselineLength("Baseline Length", float) = 0.5
-		_SphericalAngle("Spherical Angle", float) = 10.0 
+        _SphericalAngle("Spherical Angle", float) = 10.0 
+        _FocalLength("Focal Length", float) = 90.0 
 	}
  
     SubShader{
@@ -22,7 +23,8 @@ Shader "PointCloud/Displacer/Spherical_OU"{
         sampler2D _MainTex;
         float _Displacement;
 		float _BaselineLength;
-		float _SphericalAngle;
+        float _SphericalAngle;
+        float _FocalLength;
 		float _Maximum;
 
         struct Input{
@@ -31,6 +33,10 @@ Shader "PointCloud/Displacer/Spherical_OU"{
  
         inline float getDepthSpherical(float d) {
             return asin(_BaselineLength * sin(_SphericalAngle)) / asin(d);
+        }
+
+        inline float getDepthFlat(float d) {
+            return (_FocalLength / -100.0) * _BaselineLength / d;
         }
 
         void disp (inout appdata_full v){
