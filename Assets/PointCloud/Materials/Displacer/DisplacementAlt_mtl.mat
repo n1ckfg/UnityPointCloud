@@ -72,7 +72,7 @@ Material:
     - _ClipRange: -3.98
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _Displacement: 380.3
+    - _Displacement: 50
     - _DstBlend: 0
     - _Exp: 60.6
     - _FocalLength: 90
@@ -80,7 +80,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Maximum: 0.83
+    - _Maximum: 200
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1

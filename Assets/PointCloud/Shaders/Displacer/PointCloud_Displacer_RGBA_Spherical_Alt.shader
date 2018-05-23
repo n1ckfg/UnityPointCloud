@@ -48,7 +48,7 @@ Shader "PointCloud/Displacer/RGBA_SphericalAlt"{
 			float linearDistance = linearDepth / abs(cos(phi) * cos(theta));
 			float logisticDistance = 2 / (1 + exp(-10 * linearDistance)) - 1;
 			
-			v.vertex.xyz = v.normal * clamp(logisticDistance, 0, _Maximum / 1000) * (_Displacement * 100);
+			v.vertex.xyz = v.normal * clamp(logisticDistance, 0, _Maximum / 100000) * (_Displacement * 100);
 		}
  
 		void surf(Input IN, inout SurfaceOutput o) {
