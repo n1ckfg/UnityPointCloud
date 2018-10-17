@@ -4,7 +4,7 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: PointCloud_Vertex2_mtl
   m_Shader: {fileID: 4800000, guid: e57f46bc0bd314e84b9a1781ba4f630d, type: 3}
@@ -69,7 +69,7 @@ Material:
     - _Color: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _Displacement: -0.63
+    - _Displacement: 0.02
     - _DstBlend: 0
     - _FocalLength: 90
     - _GlossMapScale: 1
