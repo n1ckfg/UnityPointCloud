@@ -3,7 +3,7 @@ using System.Collections;
 //using UnityEngine.Networking;
 
 //[RequireComponent(typeof(NetworkIdentity))]
-public class BasicController : MonoBehaviour { //NetworkBehaviour {
+public class UnityPointCloud_BasicController : MonoBehaviour { //NetworkBehaviour {
 
 	private Rigidbody rb;
 
