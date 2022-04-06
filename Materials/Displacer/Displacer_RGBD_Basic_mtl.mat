@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Displacer_RGBD_mtl
+  m_Name: Displacer_RGBD_Basic_mtl
   m_Shader: {fileID: 4800000, guid: 08f32344c37d1dc44b0797ad56d7fd9d, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -79,6 +79,10 @@ Material:
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1
+    - cx: 0.5
+    - cy: 0.5
+    - fx: 0.8203125
+    - fy: 1.09375
     m_Colors:
     - _ChannelFactor: {r: -0.22, g: 0, b: 0, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
