@@ -1,6 +1,6 @@
-Shader "PointCloud/Displacer/Basic"{
+Shader "PointCloud/Displacer/Basic" {
     
-    Properties{
+    Properties {
         _MainTex ("Texture", 2D) = "white" {}
         _DispTex ("Displacement Texture", 2D) = "gray" {}
         _Displacement ("Displacement", Range(0, 1.0)) = 0.1
@@ -15,7 +15,7 @@ Shader "PointCloud/Displacer/Basic"{
 		//_EmitPower("Emit Power", Range(0,2)) = 1.0 //glow
 	}
  
-    SubShader{
+    SubShader {
         Tags { "RenderType"="Opaque" }
         Cull Front
         Lighting Off 
@@ -32,14 +32,14 @@ Shader "PointCloud/Displacer/Basic"{
         float2 _Range;
         float _ClipRange;
  
-        struct Input{
+        struct Input {
             float2 uv_DispTex;
 			float2 uv_MainTex; //(1.0, 1.0) U, V
 			//float2 uv_SpecMap;
 			//float2 uv_EmitMap;
         };
  
-        void disp (inout appdata_full v){
+        void disp (inout appdata_full v) {
             float3 dcolor = tex2Dlod (_DispTex, float4(v.texcoord.xy,0,0));
             float d = (dcolor.r*_ChannelFactor.r + dcolor.g*_ChannelFactor.g + dcolor.b*_ChannelFactor.b);
             v.vertex.xyz += v.normal * d * _Displacement;
@@ -51,7 +51,7 @@ Shader "PointCloud/Displacer/Basic"{
 		//sampler2D _EmitMap;
 		//float _EmitPower;
 		
-		void surf(Input IN, inout SurfaceOutput o){
+		void surf(Input IN, inout SurfaceOutput o) {
 			//o.Albedo = 1;
 			fixed4 mainTex = tex2D(_MainTex, IN.uv_MainTex);
 			//fixed4 bumpTex = tex2D(_BumpMap, IN.uv_BumpMap);

@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Slideshow_mtl
-  m_Shader: {fileID: 4800000, guid: 23a959651e3dd42479f1caa0198ecb91, type: 3}
+  m_Name: Displacer_RGBD_mtl
+  m_Shader: {fileID: 4800000, guid: 08f32344c37d1dc44b0797ad56d7fd9d, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -35,12 +35,16 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _DispTex:
+        m_Texture: {fileID: 2800000, guid: e4588b9992ab8b54aa9afc4a7cc8864e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: c80ad6fb9a1aac142b2abc5bacdce804, type: 3}
+        m_Texture: {fileID: 2800000, guid: 928d9acded273404a8437c24b3841d29, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -57,25 +61,26 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _BumpScale: 1
+    - _ClipRange: 0.8
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _Displacement: 5
+    - _Displacement: -0.145
     - _DstBlend: 0
-    - _Fov: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _Maximum: 200
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _Scale: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _SupersampleScale: 1
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
+    - _ChannelFactor: {r: -0.22, g: 0, b: 0, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Range: {r: 1.45, g: 0.65, b: -1.06, a: 1}
